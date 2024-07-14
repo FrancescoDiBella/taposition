@@ -1,0 +1,104 @@
+version: '3.7'
+services:    
+    zookeeper:
+        image: confluentinc/cp-zookeeper:7.4.4
+        hostname: zookeper
+        container_name: zookeper
+        environment:
+            ZOOKEEPER_CLIENT_PORT: 2181
+            ZOOKEEPER_TICK_TIME: 2000
+        networks: 
+                tap:
+                   ipv4_address: 10.0.100.24
+        ports:
+            - 22181:2181
+    kafkaServer:
+        image: confluentinc/cp-kafka:7.4.4
+        hostname: kafkaServer
+        container_name: kafkaServer
+        depends_on:
+           - zookeeper
+        ports:
+           - 29092:29092
+        environment:
+            KAFKA_BROKER_ID: 1
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafkaServer:9092,PLAINTEXT_HOST://localhost:29092
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+            KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+        networks: 
+          tap:
+            ipv4_address: 10.0.100.23
+    kafka-topics:
+        image: apache/kafka:latest    
+        command: > 
+               bash -c "
+               /opt/kafka/bin/kafka-topics.sh --create --topic positions --bootstrap-server kafkaServer:9092"
+        depends_on:
+            - kafkaServer
+        networks: 
+            - tap
+    logstash:
+        build:  
+            context: ./logstash
+            dockerfile: dockerfile
+        image: docker.elastic.co/logstash/logstash:8.13.0
+        container_name: logstash
+        environment:
+                XPACK_MONITORING_ENABLED: "false"
+        ports:
+            - 9190:9190
+        networks: 
+                tap:
+                   ipv4_address: 10.0.100.22
+        volumes:
+               - ./logstash/pipeline/log.conf:/usr/share/logstash/pipeline/logstash.conf
+    spark:
+        build:  
+            context: ./spark
+            dockerfile: dockerfile
+        image: spark:latest
+        hostname: spark
+        container_name: spark
+        volumes:
+              - ./spark:/opt/tap/
+              - tapPositions:/tmp
+        command: > 
+             /opt/spark/bin/spark-submit --conf spark.driver.extraJavaOptions="-Divy.cache.dir=/tmp -Divy.home=/tmp" --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.2,org.elasticsearch:elasticsearch-spark-30_2.12:7.15.2 /opt/tap/positionsApp.py
+        depends_on:
+            kafka-topics:
+                condition: service_completed_successfully   
+        networks: 
+                tap:
+                   ipv4_address: 10.0.100.20 
+    elasticsearch:
+        hostname: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
+        environment:
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+        ports:
+            - 9200:9200
+        networks: 
+                tap:
+                    ipv4_address: 10.0.100.21
+    kibana:
+        hostname: kibana
+        image: docker.elastic.co/kibana/kibana:7.15.2
+        ports:
+          - 5601:5601
+        volumes:
+          - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+        depends_on:
+            kafka-topics:
+             condition: service_completed_successfully
+        networks: 
+                tap:
+                    ipv4_address: 10.0.100.25   
+
+networks:
+    tap:
+      external: true
+volumes:
+    tapPositions:

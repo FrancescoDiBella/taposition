@@ -1,0 +1,14 @@
+FROM apache/spark:3.4.2
+
+# Switch to root user to install dependencies and set permissions
+USER root
+
+RUN pip3 install --upgrade pip && \
+    pip3 install pyspark && \
+    pip3 install numpy && \
+    pip3 install elasticsearch
+# Copy dataset to /tmp directory
+COPY ./dataset/data.csv /tmp
+
+# Switch back to the default non-root user
+USER spark
