@@ -9,6 +9,7 @@ RUN pip3 install --upgrade pip && \
     pip3 install elasticsearch
 # Copy dataset to /tmp directory
 COPY ./dataset/data.csv /tmp
-
+#set the working directory
+WORKDIR /tmp
 # Switch back to the default non-root user
 USER spark
