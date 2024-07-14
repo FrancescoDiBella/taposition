@@ -99,6 +99,11 @@ services:
 
 networks:
     tap:
-      external: true
+        name: tap
+        driver: bridge
+        ipam: 
+            config:
+                 - subnet: 10.0.100.1/24
+        external: true
 volumes:
     tapPositions:
