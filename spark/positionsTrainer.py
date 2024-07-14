@@ -98,7 +98,7 @@ def make_predictions(model_lat, model_lon, lat, lon):
     return pred_lat, pred_lon
 
 # Train the models
-model_lat, model_lon, test_data = model_trainer("/tmp/data.csv")
+model_lat, model_lon, test_data = model_trainer("/opt/tap/dataset/data.csv")
 
 # Save the models
 save_models(model_lat, model_lon, "/tmp/tapPositions/model_lat", "/tmp/tapPositions/model_lon")
