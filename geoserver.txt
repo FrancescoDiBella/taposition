@@ -1,4 +1,4 @@
-docker run --hostname=25c3fc8b5415 --env=CORS_ENABLED=true --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env=TOMCAT_VERSION=9.0.86 --env=CATALINA_HOME=/opt/apache-tomcat-9.0.86 --env=EXTRA_JAVA_OPTS=-Xms256m -Xmx1g --env=CORS_ALLOWED_ORIGINS=* --env=CORS_ALLOWED_METHODS=GET,POST,PUT,DELETE,HEAD,OPTIONS --env=CORS_ALLOWED_HEADERS=* --env=CORS_ALLOW_CREDENTIALS=false --env=DEBIAN_FRONTEND=noninteractive --env=CATALINA_OPTS=$EXTRA_JAVA_OPTS     -Djava.awt.headless=true -server     -Dfile.encoding=UTF-8     -Djavax.servlet.request.encoding=UTF-8     -Djavax.servlet.response.encoding=UTF-8     -D-XX:SoftRefLRUPolicyMSPerMB=36000     -Xbootclasspath/a:/opt/apache-tomcat-9.0.86/lib/marlin.jar     -Dsun.java2d.renderer=sun.java2d.marlin.DMarlinRenderingEngine     -Dorg.geotools.coverage.jaiext.enabled=true --env=GEOSERVER_VERSION=2.25.0 --env=GEOSERVER_BUILD=80 --env=GEOSERVER_DATA_DIR=/opt/geoserver_data/ --env=GEOSERVER_REQUIRE_FILE=/opt/geoserver_data//global.xml --env=GEOSERVER_LIB_DIR=/opt/apache-tomcat-9.0.86/webapps/geoserver/WEB-INF/lib/ --env=INSTALL_EXTENSIONS=false --env=WAR_ZIP_URL= --env=STABLE_EXTENSIONS= --env=STABLE_PLUGIN_URL=https://downloads.sourceforge.net/project/geoserver/GeoServer/2.25.0/extensions --env=COMMUNITY_EXTENSIONS= --env=COMMUNITY_PLUGIN_URL= --env=ADDITIONAL_LIBS_DIR=/opt/additional_libs/ --env=ADDITIONAL_FONTS_DIR=/opt/additional_fonts/ --env=SKIP_DEMO_DATA=false --env=ROOT_WEBAPP_REDIRECT=false --env=POSTGRES_JNDI_ENABLED=false --env=CONFIG_DIR=/opt/config --env=CONFIG_OVERRIDES_DIR=/opt/config_overrides --env=HEALTHCHECK_URL=http://localhost:8080/geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png --network=tap_tesi --workdir=/opt -p 8080:8080 --restart=no --label='org.opencontainers.image.ref.name=ubuntu' --label='org.opencontainers.image.version=22.04' --runtime=runc -t -d docker.osgeo.org/geoserver:2.25.0
+docker run --hostname=25c3fc8b5415 --env=CORS_ENABLED=true --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env=TOMCAT_VERSION=9.0.86 --env=CATALINA_HOME=/opt/apache-tomcat-9.0.86  --env=CORS_ALLOWED_ORIGINS=* --env=CORS_ALLOWED_METHODS=GET,POST,PUT,DELETE,HEAD,OPTIONS --env=CORS_ALLOWED_HEADERS=* --env=CORS_ALLOW_CREDENTIALS=false --env=DEBIAN_FRONTEND=noninteractive --env=GEOSERVER_VERSION=2.25.0 --env=GEOSERVER_BUILD=80 --env=GEOSERVER_DATA_DIR=/opt/geoserver_data/ --env=GEOSERVER_REQUIRE_FILE=/opt/geoserver_data//global.xml --env=GEOSERVER_LIB_DIR=/opt/apache-tomcat-9.0.86/webapps/geoserver/WEB-INF/lib/ --env=INSTALL_EXTENSIONS=false --env=WAR_ZIP_URL= --env=STABLE_EXTENSIONS= --env=STABLE_PLUGIN_URL=https://downloads.sourceforge.net/project/geoserver/GeoServer/2.25.0/extensions --env=COMMUNITY_EXTENSIONS= --env=COMMUNITY_PLUGIN_URL= --env=ADDITIONAL_LIBS_DIR=/opt/additional_libs/ --env=ADDITIONAL_FONTS_DIR=/opt/additional_fonts/ --env=SKIP_DEMO_DATA=false --env=ROOT_WEBAPP_REDIRECT=false --env=POSTGRES_JNDI_ENABLED=false --env=CONFIG_DIR=/opt/config --env=CONFIG_OVERRIDES_DIR=/opt/config_overrides --env=HEALTHCHECK_URL=http://localhost:8080/geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png --network=tap_tesi --workdir=/opt -p 8080:8080 --restart=no --label='org.opencontainers.image.ref.name=ubuntu' --label='org.opencontainers.image.version=22.04' --runtime=runc -t -d docker.osgeo.org/geoserver:2.25.0
 
 
 
@@ -12,14 +12,22 @@ curl -X PUT "localhost:9200/logs_position/_mapping?pretty" -H 'Content-Type: app
     "source": {
       "type": "geo_point"
     },
-"predicted_location": {
+    "destination": {
       "type": "geo_point"
     },
-   "timestamp":{
-    "type": "date"
-   }
+   "predicted_location": {
+      "type": "geo_point"
+    },
+    "timestamp":{
+      "type": "date"
+    },
+   "identifier": {
+      "type": "keyword"
+    }
   }
 }
 '
+
+curl -X PUT "localhost:9200/logs_position/"
 
 curl -X GET "http://elasticsearch:9200/_cat/indices?v"
