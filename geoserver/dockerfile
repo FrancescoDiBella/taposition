@@ -1,0 +1,44 @@
+# Use the official GeoServer image as the base image
+FROM docker.osgeo.org/geoserver:2.25.0
+
+# Set environment variables
+ENV CORS_ENABLED=true
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV TOMCAT_VERSION=9.0.86
+ENV CATALINA_HOME=/opt/apache-tomcat-9.0.86
+ENV CORS_ALLOWED_ORIGINS=*
+ENV CORS_ALLOWED_METHODS=GET,POST,PUT,DELETE,HEAD,OPTIONS
+ENV CORS_ALLOWED_HEADERS=*
+ENV CORS_ALLOW_CREDENTIALS=false
+ENV DEBIAN_FRONTEND=noninteractive
+ENV GEOSERVER_VERSION=2.25.0
+ENV GEOSERVER_BUILD=80
+ENV GEOSERVER_DATA_DIR=/opt/geoserver_data/
+ENV GEOSERVER_REQUIRE_FILE=/opt/geoserver_data/global.xml
+ENV GEOSERVER_LIB_DIR=/opt/apache-tomcat-9.0.86/webapps/geoserver/WEB-INF/lib/
+ENV INSTALL_EXTENSIONS=false
+ENV WAR_ZIP_URL=
+ENV STABLE_EXTENSIONS=
+ENV STABLE_PLUGIN_URL=https://downloads.sourceforge.net/project/geoserver/GeoServer/2.25.0/extensions
+ENV COMMUNITY_EXTENSIONS=
+ENV COMMUNITY_PLUGIN_URL=
+ENV ADDITIONAL_LIBS_DIR=/opt/additional_libs/
+ENV ADDITIONAL_FONTS_DIR=/opt/additional_fonts/
+ENV SKIP_DEMO_DATA=false
+ENV ROOT_WEBAPP_REDIRECT=false
+ENV POSTGRES_JNDI_ENABLED=false
+ENV CONFIG_DIR=/opt/config
+ENV CONFIG_OVERRIDES_DIR=/opt/config_overrides
+ENV HEALTHCHECK_URL=http://localhost:8080/geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
+
+# Set the working directory
+WORKDIR /opt
+
+# Expose the required port
+EXPOSE 8080
+
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl --fail $HEALTHCHECK_URL || exit 1
+
+# Start the GeoServer
+CMD ["catalina.sh", "run"]
