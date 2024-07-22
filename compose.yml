@@ -1,5 +1,5 @@
 version: '3.7'
-services:    
+services:
     zookeeper:
         image: confluentinc/cp-zookeeper:7.4.4
         hostname: zookeper
@@ -8,10 +8,11 @@ services:
             ZOOKEEPER_CLIENT_PORT: 2181
             ZOOKEEPER_TICK_TIME: 2000
         networks: 
-                tap:
-                   ipv4_address: 10.0.100.24
+            tap:
+                ipv4_address: 10.0.100.24
         ports:
             - 22181:2181
+
     kafkaServer:
         image: confluentinc/cp-kafka:7.4.4
         hostname: kafkaServer
@@ -28,8 +29,9 @@ services:
             KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
         networks: 
-          tap:
-            ipv4_address: 10.0.100.23
+            tap:
+                ipv4_address: 10.0.100.23
+
     kafka-topics:
         image: apache/kafka:latest    
         command: > 
@@ -39,6 +41,7 @@ services:
             - kafkaServer
         networks: 
             - tap
+
     logstash:
         build:  
             context: ./logstash
@@ -46,14 +49,15 @@ services:
         image: docker.elastic.co/logstash/logstash:8.13.0
         container_name: logstash
         environment:
-                XPACK_MONITORING_ENABLED: "false"
+            XPACK_MONITORING_ENABLED: "false"
         ports:
             - 9190:9190
         networks: 
-                tap:
-                   ipv4_address: 10.0.100.22
+            tap:
+                ipv4_address: 10.0.100.22
         volumes:
-               - ./logstash/pipeline/log.conf:/usr/share/logstash/pipeline/logstash.conf
+            - ./logstash/pipeline/log.conf:/usr/share/logstash/pipeline/logstash.conf
+
     spark:
         build:  
             context: ./spark
@@ -62,16 +66,17 @@ services:
         hostname: spark
         container_name: spark
         volumes:
-              - ./spark:/opt/tap/
-              - tapPositions:/tmp
+            - ./spark:/opt/tap/
+            - tapPositions:/tmp
         command: > 
              /opt/spark/bin/spark-submit --conf spark.driver.extraJavaOptions="-Divy.cache.dir=/tmp -Divy.home=/tmp" --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.2,org.elasticsearch:elasticsearch-spark-30_2.12:7.15.2 /opt/tap/positionsApp.py
         depends_on:
             kafka-topics:
                 condition: service_completed_successfully   
         networks: 
-                tap:
-                   ipv4_address: 10.0.100.20 
+            tap:
+                ipv4_address: 10.0.100.20 
+
     elasticsearch:
         hostname: elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
@@ -81,21 +86,64 @@ services:
         ports:
             - 9200:9200
         networks: 
-                tap:
-                    ipv4_address: 10.0.100.21
+            tap:
+                ipv4_address: 10.0.100.21
+
     kibana:
         hostname: kibana
         image: docker.elastic.co/kibana/kibana:7.15.2
         ports:
-          - 5601:5601
+            - 5601:5601
         volumes:
-          - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+            - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
         depends_on:
             kafka-topics:
-             condition: service_completed_successfully
+                condition: service_completed_successfully
         networks: 
-                tap:
-                    ipv4_address: 10.0.100.25   
+            tap:
+                ipv4_address: 10.0.100.25
+
+    geoserver:
+        build:
+            context: ./geoserver
+            dockerfile: Dockerfile
+        image: custom-geoserver:2.25.0
+        hostname: geoserver
+        container_name: geoserver
+        environment:
+            CORS_ENABLED: true
+            PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+            TOMCAT_VERSION: 9.0.86
+            CATALINA_HOME: /opt/apache-tomcat-9.0.86
+            CORS_ALLOWED_ORIGINS: '*'
+            CORS_ALLOWED_METHODS: GET,POST,PUT,DELETE,HEAD,OPTIONS
+            CORS_ALLOWED_HEADERS: '*'
+            CORS_ALLOW_CREDENTIALS: 'false'
+            DEBIAN_FRONTEND: noninteractive
+            GEOSERVER_VERSION: 2.25.0
+            GEOSERVER_BUILD: 80
+            GEOSERVER_DATA_DIR: /opt/geoserver_data/
+            GEOSERVER_REQUIRE_FILE: /opt/geoserver_data/global.xml
+            GEOSERVER_LIB_DIR: /opt/apache-tomcat-9.0.86/webapps/geoserver/WEB-INF/lib/
+            INSTALL_EXTENSIONS: 'false'
+            WAR_ZIP_URL: ''
+            STABLE_EXTENSIONS: ''
+            STABLE_PLUGIN_URL: https://downloads.sourceforge.net/project/geoserver/GeoServer/2.25.0/extensions
+            COMMUNITY_EXTENSIONS: ''
+            COMMUNITY_PLUGIN_URL: ''
+            ADDITIONAL_LIBS_DIR: /opt/additional_libs/
+            ADDITIONAL_FONTS_DIR: /opt/additional_fonts/
+            SKIP_DEMO_DATA: 'false'
+            ROOT_WEBAPP_REDIRECT: 'false'
+            POSTGRES_JNDI_ENABLED: 'false'
+            CONFIG_DIR: /opt/config
+            CONFIG_OVERRIDES_DIR: /opt/config_overrides
+            HEALTHCHECK_URL: http://localhost:8080/geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
+        ports:
+            - 8080:8080
+        networks: 
+            tap:
+                ipv4_address: 10.0.100.26
 
 networks:
     tap:
@@ -103,7 +151,8 @@ networks:
         driver: bridge
         ipam: 
             config:
-                 - subnet: 10.0.100.1/24
+                - subnet: 10.0.100.1/24
         external: true
+
 volumes:
     tapPositions:
