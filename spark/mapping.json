@@ -1,0 +1,24 @@
+{
+   "mappings": { 
+    "properties": {
+        "location": {
+        "type": "geo_point"
+        },
+        "source": {
+        "type": "geo_point"
+        },
+        "destination": {
+        "type": "geo_point"
+        },
+        "predicted_location": {
+        "type": "geo_point"
+        },
+        "timestamp":{
+        "type": "date"
+        },
+        "identifier": {
+        "type": "keyword"
+        }
+    }
+   }
+}
