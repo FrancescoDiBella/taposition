@@ -16,9 +16,33 @@ from pyspark.ml import Pipeline
 from pyspark.ml.pipeline import PipelineModel
 
 from pyspark.conf import SparkConf
+import requests
+
+def create_index_if_not_exists(index_name, mapping_file):
+    url = f'http://elasticsearch:9200/{index_name}'
+    headers = {'Content-Type': 'application/json'}
+    
+    # Check if the index exists
+    response = requests.head(url)
+    
+    if response.status_code == 404:  # Index does not exist
+        with open(mapping_file, 'r') as file:
+            mapping = file.read()
+        response = requests.put(url, headers=headers, data=mapping)
+        if response.status_code == 200:
+            print(f"Index '{index_name}' created successfully.")
+        else:
+            print(f"Failed to create index '{index_name}': {response.json()}")
+    elif response.status_code == 200:  # Index already exists
+        print(f"Index '{index_name}' already exists.")
+    else:
+        print(f"Error checking index '{index_name}': {response.status_code} {response.text}")
 
 # Configuration for Elasticsearch
 elasticIndex = "logs_position"
+mappingFile = "/opt/tap/mapping.json"
+
+create_index_if_not_exists(elasticIndex, mappingFile)
 sparkConf = SparkConf().set("es.nodes", "elasticsearch").set("es.port", "9200")
 
 # Initialize Spark session
