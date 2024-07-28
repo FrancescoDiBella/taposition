@@ -110,6 +110,9 @@ services:
         image: custom-geoserver:2.25.0
         hostname: geoserver
         container_name: geoserver
+        #Copy the ./geoserver/geo_data folder to the container
+        volumes:
+            - ./geoserver/geo_data:/opt/tapposition
         environment:
             CORS_ENABLED: true
             PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
