@@ -336,7 +336,7 @@ BridgeController.prototype.initialize = function() {
         );
         */
         cycles++;
-    }, 2500); // 1000 millisecondi = 1 secondo
+    }, 1800); // 1000 millisecondi = 1 secondo
 
     //inviare aggiornamenti di tutti gli elementi dynamic (esistono static e dynamic);
     //esempio: Le sfere si possono muovere, la capsula gialla no; è dunque utile inviare le posizioni delle sfere
