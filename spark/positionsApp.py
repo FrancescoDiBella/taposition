@@ -99,7 +99,7 @@ model_lat = PipelineModel.load(modelPath + "_lat")
 model_lon = PipelineModel.load(modelPath + "_lon")
 
 # Assemble features for prediction
-assembler = VectorAssembler(inputCols=["lat", "lon"], outputCol="features")
+assembler = VectorAssembler(inputCols=["lat", "lon"], outputCol="features", handleInvalid="skip")
 positionsDf = assembler.transform(positionsDf)
 
 # Make predictions on streaming data
