@@ -8,3 +8,6 @@ server.host: "kibana"
 elasticsearch.hosts: [ "http://elasticsearch:9200" ]
 xpack.monitoring.ui.container.elasticsearch.enabled: true
 #xpack.encryptedSavedObjects.encryptionKey: iYU2RF{yT&&-]8D:ew#;b!*6/8=2q:Px
+xpack.security.enabled: false
+server.cors.enabled: true
+server.cors.allowOrigin: ["*"]
