@@ -21,6 +21,8 @@ const authentication = require("./authentication");
 const sequelize = require("./sequelize");
 const sequelizeToJsonSchemas = require("./sequelize-to-json-schemas");
 
+const corsMiddleware = require("./middleware/cors");
+
 function addJsonHeader(req, res, next) {
   // Verifica se l'header "Content-Type" è già presente nella richiesta
   if (!req.headers['content-type']) {
@@ -44,6 +46,7 @@ app.use(
 );
 app.use(cors());
 app.use(compress());
+app.use(corsMiddleware);
 app.use(addJsonHeader);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

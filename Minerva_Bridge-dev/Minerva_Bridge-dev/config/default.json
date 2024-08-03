@@ -28,9 +28,9 @@
       "passwordField": "password"
     }
   },
-  "postgres": "postgres://postgres:password@postgres:5432",
+  "postgres": "postgres://postgres:password@postgres_lms_demo:5432",
   "lrsql":{
-    "endpoint":"http://lrs:8080/xapi/statements",
+    "endpoint":"http://lrs:8083/xapi/statements",
     "username":"my_key",
     "password":"my_secret"
   },
