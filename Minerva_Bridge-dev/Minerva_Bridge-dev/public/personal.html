@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <!-- Aggiungi jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+         body, html {
+          background-color: #b9d0d3;
+          font-family: 'Roboto', sans-serif;
+          height: 100%;
+        }
+
+        body{
+          overflow-y: scroll;
+        }
+
+        .navbar {
+            background-color: #f9f5f6;
+        }
+        .navbar-brand {
+            color:  #29201f74 !important;
+        }
+        #main-card {
+            max-width: 90rem;
+        }
+        .list-group-item {
+            background-color: transparent;
+            border-color: #19aa8d95;
+        }
+        .nav-item{
+            padding: 10px 0px 10px 20px;
+            color:  #29201f74 !important;
+        }
+        .nav-item:hover{
+          background-color: #e5e3e3;
+          border-radius: 8px;
+          cursor: pointer;
+        }
+        .d-inline-block{
+          background-color: #f9f5f6;
+        }
+        .nav-link{
+          color:  #29201f74 !important;
+        }
+
+        #content-header {
+            background-color: transparent;
+            color: #29201f74;
+        }
+
+        #content-body {
+            background-color: transparent;
+            color: #29201f74;
+        }
+        .sidebar {
+          width: 6rem; /* Larghezza fissa della sidebar */
+          max-width: 75px;
+          height: 100vh; /* Altezza uguale a quella della viewport */
+          background-color: #f9f5f6;
+          color: white;
+          display: flex;
+          flex-direction: column;
+          justify-content: center; /* Centra verticalmente */
+          align-items: center; /* Centra orizzontalmente */
+          gap: 4rem;
+          border-radius: 10px 32px 32px 10px;
+          position: sticky;
+          top: 0;
+        }
+
+        .right-sidebar {
+          width: 7rem; /* Larghezza fissa della sidebar */
+          max-width: 100px;
+          height: 100vh; /* Altezza uguale a quella della viewport */
+          background-color: #f9f5f6;
+          color: white;
+          display: flex;
+          flex-direction: column;
+          justify-content: center; /* Centra verticalmente */
+          align-items: center; /* Centra orizzontalmente */
+          gap: 4rem;
+          border-radius: 10px 32px 32px 10px;
+          position: sticky;
+          right: 0;
+          top: 0;
+        }
+
+        .side-item{
+          color: #646464;
+        }
+
+        .side-item i:hover{
+          color: #222222;
+        }
+
+        .container-fluid {
+          height: 100vh;
+        }
+
+        .info-card{
+          height: 10.6rem;
+          width: 13rem;
+          border-radius: 15px;
+          background-color: #ffffff91;
+          backdrop-filter: blur(8px);
+          padding-top: 1rem;
+          color: black;
+        }
+
+        .info-card {
+          transition: transform 0.2s; /* Transizione più veloce */
+        }
+
+        /* Effetto su :hover */
+        .info-card:hover {
+          transform: scale(1.1);
+          transition: transform 0.1s; /* Transizione più rapida al passaggio */
+        }
+
+        /* Effetto su :not(:hover) */
+        .info-card:not(:hover) {
+          transition: transform 0.3s; /* Transizione più lenta all'uscita */
+        }
+
+        .side-item {
+          transition: transform 0.2s; /* Transizione più veloce */
+        }
+
+        /* Effetto su :hover */
+        .side-item:hover {
+          transform: scale(1.3);
+          transition: transform 0.2s; /* Transizione più rapida al passaggio */
+        }
+
+        /* Effetto su :not(:hover) */
+        .side-item:not(:hover) {
+          transition: transform 0.4s; /* Transizione più lenta all'uscita */
+        }
+
+        .info-card-full{
+          height: auto;
+          width: 50rem;
+          max-width: 90%;
+          border-radius: 15px;
+          background-color: #ffffff91;
+          backdrop-filter: blur(8px);
+          padding-top: 1rem;
+          color: black;
+        }
+
+        .card-decorator{
+          height: 3rem;
+          top: 0px;
+          width: 13%;
+          position: relative;
+          display: inline-block;
+          border-radius: 0px 15px 15px 0px;
+          background-color: #19aa8d;
+        }
+
+        .info-card-header{
+          width: 8rem;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          display: inline-block;
+          color: black;
+          font-weight: bolder;
+          font-size: 1.4rem;
+          margin-left: 1rem;
+          margin-top: 0.2rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .info-card-content{
+          color: rgb(48, 48, 48);
+          font-size: 0.9rem;
+          margin-left: 3rem;
+          margin-top: 0.3rem;
+          margin-bottom: 0.5rem;
+          padding-right: 3px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+
+        .info-card-header-full{
+          width: 15rem;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          display: inline-block;
+          color: black;
+          font-weight: bolder;
+          font-size: 1.4rem;
+          margin-left: 1rem;
+          margin-top: 0.2rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .info-card-content-full{
+          color: rgb(48, 48, 48);
+          font-size: 0.9rem;
+          margin-left: 5rem;
+          margin-top: 0.3rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .flex-box{
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .button{
+          font-size: 0.8rem;
+        }
+
+        .vis{
+          display: none;
+        }
+
+        .info-grid{
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          grid-template-rows: 1fr 1fr;
+          gap: 1rem;
+        }
+
+        ._visible{
+          display: unset;
+        }
+
+        /* Media query for smaller screens */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                max-width: unset;
+                flex-direction: row;
+                height: 3rem;
+                margin-left: auto;
+                gap: 3rem;
+                margin-right: auto;
+                border-radius: 0px 0px 32px 32px;
+                position: sticky;
+                top: 0;
+                z-index: 99;
+                background-color: #ffffffb0;
+                border: 2px solid #dbdbdbda;
+                border-top: 0px;
+
+                backdrop-filter: blur(8px);
+            }
+
+
+            .side-item{
+              margin: 7px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-2 sidebar">
+              <!-- Contenuto della sidebar -->
+              <a class="side-item" id="side-getLMS" href="#">
+                <i class="fa-solid fa-sitemap fa-xl" ></i>
+              </a>
+              <a class="side-item" href="#">
+                <i class="fa-solid fa-users fa-xl"></i>
+              </a>
+              <a class="side-item" id="side-tracking" href="#">
+                <i class="fa-solid fa-chart-line fa-xl"></i>
+              </a>
+              <a class="side-item" href="#">
+                <i class="fa-solid fa-sitemap fa-xl"></i>
+              </a>
+              <a class="side-item" href="#">
+                <i class="fa-solid fa-gear fa-xl"></i>
+              </a>
+            </div>
+
+
+
+            <!-- Main content -->
+            <main class="col-md-9 ml-md-5">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Minerva Dashboard</h1>
+                </div>
+
+                <!-- Display users for the selected LMS -->
+                <div id="main-card">
+                    <div class="modal-header" id="content-header">
+                    </div>
+                    <!--Vorrei che il content-body si flex -->
+                    <div class="d-flex flex-md-row flex-box" id="content-body">
+                      <div class="info-card vis">
+                        <div class="card-decorator"></div>
+                        <div class="info-card-header">LMS di test ciao</div>
+                        <div class="info-card-content">URL Base:</div>
+                        <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                      </div>
+
+
+                      <div class="info-card-full vis">
+                        <div class="card-decorator"></div>
+                        <div class="info-card-header-full">LMS di test ciao</div>
+                        <div class="info-card-content-full">URL Base:</div>
+                        <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                      </div>
+
+                      <div class="info-card-full vis">
+                        <div class="card-decorator"></div>
+                        <div class="info-card-header-full">LMS di test ciao</div>
+                        <div class="info-card-content-full">
+                          URL Base:
+                          <div class="info-card">
+                            <div class="card-decorator"></div>
+                            <div class="info-card-header">LMS di test ciao</div>
+                            <div class="info-card-content">URL Base:</div>
+                            <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                          </div>
+                          <div class="info-card">
+                            <div class="card-decorator"></div>
+                            <div class="info-card-header">LMS di test ciao</div>
+                            <div class="info-card-content">URL Base:</div>
+                            <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                          </div>
+                          <div class="info-card">
+                            <div class="card-decorator"></div>
+                            <div class="info-card-header">LMS di test ciao</div>
+                            <div class="info-card-content">URL Base:</div>
+                            <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                          </div>
+
+                        </div>
+                        <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                      </div>
+
+                    </div>
+                </div>
+            </main>
+
+            <!-- Aggiungi il modale per la creazione dell'LMS nell'HTML e setta la sua visibilità ad hidden , verrà poi cambiate tramite codice -->
+
+            <!-- Modal -->
+            <div class="modal fade" tabindex="-1" id="lms-modal">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Crea LMS</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body" id="lms-modal-body">
+                    <input id="lms-admin" type="text" class="form-control vis" placeholder="id Admin">
+                    <input id="lms-name" type="text" class="form-control" placeholder="Nome LMS">
+                    <input id="lms-baseURL" type="text" class="form-control mt-2" placeholder="URL Base">
+                    <input id="lms-username" type="text" class="form-control mt-2" placeholder="Username">
+                    <input id="lms-password" type="password" class="form-control mt-2" placeholder="Password">
+                    <!--input per 'lms-type' deve essere a scelta tra due valori 'XAPI' e 'SCORM' tramite radio button-->
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="lms-type" id="XAPI">
+                      <label class="form-check-label" for="flexRadioDefault1">
+                        XAPI
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="lms-type" id="SCORM" checked>
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        SCORM
+                      </label>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary" id="lmsAdd-btn">Aggiungi</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/72f900170b.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Aggiungi AXIOS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js">
+    </script>
+    <script>
+      const bridgeURL = window.location.protocol + "//" + window.location.host;
+
+        function getToken(){
+            return Cookies.get('token');
+        }
+
+        function getEmail(){
+            return Cookies.get('email');
+        }
+
+        function getRole(){
+            return Cookies.get('role');
+        }
+
+        async function getLMS(idAdmin){
+            fetch(bridgeURL+'/admin/getToken', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+            })
+            .then(response => response.json())
+            .then(data => {
+              if(data.token == undefined) {
+                alert('Credenziali errate');
+                return;
+              }
+              Cookies.set('token', data.token, {expires: 1});
+
+              fetch(bridgeURL+'/admin/'+idAdmin+'/lms', {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + Cookies.get('token')
+                }
+              })
+              .then(response => response.json())
+              .then(async data => {
+                console.log("GET", data)
+                //Ripulisci il content-body e il content-header
+                document.getElementById("content-body").innerHTML = "";
+                document.getElementById("content-header").innerHTML = "";
+                await showLMS(data);
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+                return [];
+              });
+            })
+        }
+
+        // Show the users for the selected LMS
+        async function showLMS(lms) {
+          //iter l'array e popolare la sidebar
+          //aggiungere nav item con lms.name
+          //aggiungere onclick="showUsers(lms.id)"
+          //aggiungi per prima una card uguale a quelle del ciclo for ma con un bottone che apre un modale per aggiungere un lms
+          let contentBody = document.getElementById("content-body");
+          //aggiungi una card per aggiungere un lms
+          let card = document.createElement("div");
+          card.classList.add('info-card');
+          let cardDecorator = document.createElement("div");
+          cardDecorator.classList.add('card-decorator');
+          cardDecorator.style.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+          let cardHeader = document.createElement("div");
+          cardHeader.classList.add('info-card-header');
+          cardHeader.innerHTML = "Crea LMS";
+          let cardContent = document.createElement("div");
+          cardContent.classList.add('info-card-content');
+          cardContent.style.marginLeft = '0px';
+          let cardButton = document.createElement("button");
+          cardButton.classList.add('btn', 'btn-primary', 'mt-2', 'button');
+          //centra il bottone nel cardContent
+          cardButton.style.marginLeft = '3rem';
+          let icon = document.createElement("i");
+          icon.classList.add('fa-solid', 'fa-plus', 'fa-xl');
+          cardButton.appendChild(icon);
+          cardButton.onclick = function() {showModalAddLMS()};
+
+          //vorrei che il bottone sia nel cardContent
+          cardContent.appendChild(cardButton);
+
+          card.appendChild(cardDecorator);
+          card.appendChild(cardHeader);
+          card.appendChild(cardContent);
+          contentBody.appendChild(card);
+
+          //itera l'array e popola il content-body
+          for(let i = 0; i < lms.length; i++) {
+            let lmsName = lms[i].name;
+            let lmsId = lms[i].id;
+            let lmsCard = document.createElement("div");
+            lmsCard.classList.add('info-card');
+            let lmsCardDecorator = document.createElement("div");
+            lmsCardDecorator.classList.add('card-decorator');
+            //genera un colore random per ogni lms
+            lmsCardDecorator.style.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+            let lmsCardHeader = document.createElement("div");
+            lmsCardHeader.classList.add('info-card-header');
+            lmsCardHeader.innerHTML = lmsName;
+            let lmsCardContent = document.createElement("div");
+            lmsCardContent.classList.add('info-card-content');
+
+            let lmsCardButton = document.createElement("button");
+            lmsCardButton.classList.add('btn', 'btn-secondary', 'ml-5', 'mt-2', 'button');
+            lmsCardButton.innerHTML = 'Mostra dettagli';
+            lmsCardButton.onclick = function() {showInfo(lms[i])};
+            lmsCardContent.innerHTML = "URL Base: " + lms[i].baseURL;
+
+            lmsCard.appendChild(lmsCardDecorator);
+            lmsCard.appendChild(lmsCardHeader);
+            lmsCard.appendChild(lmsCardContent);
+            lmsCard.appendChild(lmsCardButton);
+
+            document.getElementById("content-body").appendChild(lmsCard);
+          }
+        }
+
+        async function showInfo(lms){
+          //mostra le info nel content-body e modifica il content-header
+          let contentBody = document.getElementById("content-body");
+          let contentHeader = document.getElementById("content-header");
+          //aggiungi un bottone per tornare indietro
+          let backButton = document.createElement("button");
+          backButton.classList.add('btn', 'btn-secondary', 'ml-5', 'mt-2', 'button');
+          backButton.innerHTML = 'Torna indietro';
+          backButton.onclick = function() {getLMS(lms.idAdmin)};
+          contentHeader.appendChild(backButton);
+          contentBody.innerHTML = "";
+          //crea una card che sta dentro il content-body
+          let card = document.createElement("div");
+          card.classList.add('info-card-full');
+          //crea un decorator per la card
+          let cardDecorator = document.createElement("div");
+          cardDecorator.classList.add('card-decorator');
+          //genera un colore random per ogni lms
+          cardDecorator.style.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+          //crea un header per la card
+          let cardHeader = document.createElement("div");
+          cardHeader.classList.add('info-card-header-full');
+          cardHeader.innerHTML = lms.name;
+          //crea un content per la card
+          let cardContent = document.createElement("div");
+          cardContent.classList.add('info-card-content-full');
+          cardContent.innerHTML = "URL Base: " + lms.baseURL + ' <br> Tipo: ' + lms.statementsType + ' <br> idAdmin: ' + lms.idAdmin;
+          //crea un bottone per eliminare lms
+          let buttonL = document.createElement("button");
+          buttonL.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1', 'ml-3');
+          buttonL.innerHTML = 'Elimina LMS';
+          buttonL.onclick = function() {deleteLMS(lms.idAdmin, lms.id)};
+
+          //creare bottone che permette di modificare lms
+          let buttonM = document.createElement("button");
+          buttonM.classList.add('btn', 'btn-warning', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1');
+          buttonM.innerHTML = 'Modifica LMS';
+          buttonM.onclick = function() {showModalModifyLMS(lms.id)};
+
+          //mostra una tabella con intestazione idUsr, idApp3D, richiamando la funzione showUsers(lms.id)
+          let table = document.createElement("table");
+          table.classList.add('table', 'table-striped', 'table-hover', 'table-sm', 'mt-3');
+          let thead = document.createElement("thead");
+          let tr = document.createElement("tr");
+          let th1 = document.createElement("th");
+          th1.innerHTML = "idUsr";
+          let th2 = document.createElement("th");
+          th2.innerHTML = "idApp3D";
+          let th3 = document.createElement("th");
+          th3.innerHTML = "Azioni";
+          tr.appendChild(th1);
+          tr.appendChild(th2);
+          tr.appendChild(th3);
+          thead.appendChild(tr);
+          table.appendChild(thead);
+          let tbody = document.createElement("tbody");
+          tbody.id = "tbody";
+          table.appendChild(tbody);
+
+          //crea un bottone per aggiungere un utente
+          let button = document.createElement("button");
+          button.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1');
+          button.innerHTML = 'Aggiungi utente';
+          button.onclick = function() {showModalAddUser(lms.id, lms.idAdmin)};
+          console.log("ID", lms.id);
+          //aggiungi il decorator, l'header, il content e la tabella alla card
+          card.appendChild(cardDecorator);
+          cardContent.appendChild(buttonM);
+          cardContent.appendChild(buttonL);
+          card.appendChild(cardHeader);
+          card.appendChild(cardContent);
+          card.appendChild(table);
+          card.appendChild(button);
+
+          //aggiungi button per fare clear del localStorage per il tracking
+          let buttonClear = document.createElement("button");
+          buttonClear.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1');
+          buttonClear.innerHTML = 'Clear Tracking';
+          buttonClear.onclick = function() {localStorage.setItem("tracking", JSON.stringify([]))};
+          card.appendChild(buttonClear);
+
+          //aggiungi button per fare clear del localStorage per il tracking
+          let trackingButton = document.createElement("button");
+          trackingButton.classList.add("btn", "btn-primary", "btn-sm", "float-right", "mr-2", "mt-1", "mb-1");
+          trackingButton.innerHTML = 'Mostra Tracking';
+          trackingButton.onclick = async function() {await showTracking();};
+          card.appendChild(trackingButton);
+
+          //aggiungi la card al content-body
+          contentBody.appendChild(card);
+          //richiama la funzione showUsers(lms.id)
+          await showUsers(lms.idAdmin, lms.id);
+        }
+
+        // Show the users for the selected LMS
+        async function showUsers(idAdmin, idLms){
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
+
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
+
+          Cookies.set('token', data.token, {expires: 1});
+
+          const resp2 = await fetch(bridgeURL+'/admin/'+idAdmin+'/lms/'+idLms+'/users', {
+                            method: 'GET',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': 'Bearer ' + Cookies.get('token')
+                            }
+                          })
+          const data2 = await (await resp2).json();
+          console.log("GET", data2)
+          let tbody = document.getElementById("tbody");
+          tbody.innerHTML = "";
+
+          for(let i = 0; i < data2.length; i++) {
+            let tr = document.createElement("tr");
+            let td1 = document.createElement("td");
+            td1.innerHTML = data2[i].idUsr;
+            let td2 = document.createElement("td");
+            td2.innerHTML = data2[i].idApp3D;
+            let td3 = document.createElement("td");
+            let button = document.createElement("button");
+            button.classList.add('btn', 'btn-danger', 'btn-sm');
+            button.innerHTML = 'Elimina';
+            button.onclick = function() {deleteUser(idAdmin, idLms, data2[i].id)};
+            td3.appendChild(button);
+
+            let trackButton = document.createElement("button");
+            trackButton.classList.add('btn', 'btn-primary', 'btn-sm', 'ml-2');
+            trackButton.innerHTML = 'Tracking';
+            trackButton.onclick = function() {addTracking(idAdmin, idLms, data2[i].idUsr, data2[i].idApp3D)};
+            td3.appendChild(trackButton);
+
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tbody.appendChild(tr);
+          }
+        }
+
+        async function addTracking(idAdmin, idLms, idUsr, idApp3D){
+          //setta un coockie con l'idUsr e l'idApp3D all'interno dell'oggetto tracking dentro un array di oggetti
+          //chiamato tracking_list che è dentro il coockie tracking
+          //il coockie tracking ha un campo idAdmin e un campo idLms
+          let tracking = JSON.parse(localStorage.getItem("tracking"));
+          console.log("TRACKING", tracking)
+          //controlla se la quadrupla è già presente nel coockie
+          if(tracking != undefined){
+            let found = false;
+            for(let i = 0; i < tracking.length; i++){
+              if(tracking[i].idUsr == idUsr && tracking[i].idApp3D == idApp3D
+                  && tracking[i].idAdmin == idAdmin && tracking[i].idLms == idLms){
+                found = true;
+                break;
+              }
+            }
+            if(!found){
+              //controlla che l'idApp3D della quadrupla che voglio inserire sia uguale a quella di un'altra quadrupla
+              //se è la prima ad essere inserita allora non eseguire il controllo
+              if(tracking.length > 0){
+                let found2 = false;
+                for(let i = 0; i < tracking.length; i++){
+                  if(tracking[i].idApp3D == idApp3D && tracking[i].idAdmin == idAdmin && tracking[i].idLms == idLms){
+                    found2 = true;
+                    break;
+                  }
+                }
+                if(!found2){
+                  alert("Non puoi inserire un utente con un idApp3D diverso da quelli già inseriti");
+                  return;
+                }
+              }
+
+              tracking.push({idUsr: idUsr, idApp3D: idApp3D, idAdmin: idAdmin, idLms: idLms});
+              localStorage.setItem("tracking", JSON.stringify(tracking));
+            }
+          }
+
+        }
+
+        async function deleteUser(idAdmin, idLms, id){
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
+
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
+
+          Cookies.set('token', data.token, {expires: 1});
+
+          const resp2 = await fetch(bridgeURL+'/admin/'+idAdmin+'/lms/'+idLms+'/users/'+id, {
+                            method: 'DELETE',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': 'Bearer ' + Cookies.get('token')
+                            }
+                          })
+          const data2 = await (await resp2).json();
+
+          await showUsers(idAdmin, idLms);
+        }
+
+        async function showModalAddUser(idLms, idAdmin){
+          //MOSTRA UN MODAL PER AGGIUNGERE UN UTENTE; il modal ha un form con due campi: idUsr e idApp3D e apparirà davanti all'attuale pagina
+          //il form ha un bottone per aggiungere l'utente
+          //il bottone chiama la funzione addUser(idLMS, idUsr, idApp3D)
+          //il modal ha un bottone per chiuderlo
+          //il bottone chiama la funzione closeModal()
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la route POST /admin/lms/:idLMS/users
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la funzione showUsers(idLMS)
+          //la funzione closeModal() chiama la funzione showUsers(idLMS)
+          let modal = document.createElement("div");
+          modal.classList.add('modal', 'fade');
+          modal.id = "modal";
+          modal.tabIndex = "-1";
+          modal.role = "dialog";
+          modal.setAttribute("aria-labelledby", "exampleModalLabel");
+          modal.setAttribute("aria-hidden", "true");
+          modal.innerHTML = ''+' <div class="modal-dialog" role="document">'+
+          '  <div class="modal-content">'+
+          '    <div class="modal-header">'+
+          '      <h5 class="modal-title" id="exampleModalLabel">Aggiungi utente</h5>'+
+          '      <button type="button" class="close" data-dismiss="modal" aria-label="Close">'+
+          '        <span aria-hidden="true">&times;</span>'+
+          '      </button>'+
+          '    </div>'+
+          '    <div class="modal-body">'+
+          '      <form>'+
+          '        <div class="form-group">'+
+          '          <label for="idUsr" class="col-form-label">idUsr:</label>'+
+          '          <input type="text" style="width: 10rem; display: inline-block" class="form-control" id="idUsr">'+
+          '        </div>'+
+          '        <div class="form-group">'+
+          '          <label for="idApp3D" class="col-form-label">idApp3D:</label>'+
+          '          <input type="text" style="width: 10rem; display: inline-block" class="form-control" id="idApp3D">'+
+          '        </div>'+
+          '      </form>'+
+          '    </div>'+
+          '    <div class="modal-footer">'+
+          '      <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>'+
+          '      <button type="button" class="btn btn-primary" onclick="addUser('+idLms+','+idAdmin+')">Aggiungi</button>'+
+          '    </div>'+
+          '  </div>'+
+          '</div>';
+          document.body.appendChild(modal);
+          console.log("ID MODAL", idLms)
+          $('#modal').modal('show');
+        }
+
+        async function addUser(idLms, idAdmin){
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la route POST /admin/lms/:idLMS/users
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la funzione showUsers(idLMS)
+          console.log("ID addUSR", idLms)
+          console.log("ID addUSR", idAdmin)
+          let idUsr = document.getElementById("idUsr").value;
+          let idApp3D = document.getElementById("idApp3D").value;
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
+
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
+
+          Cookies.set('token', data.token, {expires: 1});
+          let body = {};
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la route POST /admin/lms/:idLMS/users
+          if(Cookies.get('role') == 'superadmin'){
+            body = {
+              idUsr: idUsr,
+              idApp3D: idApp3D,
+              idAdmin
+            }
+          }else{
+            body = {
+              idUsr: idUsr,
+              idApp3D: idApp3D
+            }
+          }
+          const resp2 = await fetch(bridgeURL+'/admin/'+idAdmin+'/lms/'+idLms+'/users', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + Cookies.get('token')
+                          },
+                          body: JSON.stringify(body)
+                        })
+
+          const data2 = await (await resp2).json();
+          console.log("POST", data2)
+
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la funzione showUsers(idLMS)
+          await showUsers(idAdmin, idLms);
+          //la funzione closeModal() chiama la funzione showUsers(idLMS)
+          //prima di chiudere il modal, pulisci i campi del form
+          document.getElementById("idUsr").value = "";
+          document.getElementById("idApp3D").value = "";
+          closeModal();
+          //mostra una notifica che dice che l'utente è stato aggiunto e scompare dopo 3 secondi
+          //la notifica deve essere verde e in alto a destra con z-index 99
+          //se statusMsg == 'Utente già registrato' la notifica deve essere rossa
+
+          let alert = document.createElement("div");
+          alert.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show', 'position-absolute', 'mt-5', 'mr-5');
+          alert.style.zIndex = "99";
+          alert.style.top = "0";
+          alert.style.right = "0";
+          alert.role = "alert";
+          alert.innerHTML = data2.statusMsg;
+
+          if(data2.statusMsg == 'Utente già registrato.'){
+            alert.classList.remove('alert-success');
+            alert.classList.add('alert-danger');
+          }
+
+          let button = document.createElement("button");
+          button.type = "button";
+          button.classList.add('close');
+          button.setAttribute("data-dismiss", "alert");
+          button.setAttribute("aria-label", "Close");
+          button.innerHTML = '<span aria-hidden="true">&times;</span>';
+          alert.appendChild(button);
+          document.getElementById("content-body").appendChild(alert);
+          setTimeout(function(){ alert.remove(); }, 3000);
+        }
+
+        async function addLms(idAdmin){
+          //la funzione addLms() chiama la route POST /admin/lms
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
+
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
+
+          Cookies.set('token', data.token, {expires: 1});
+
+          let name = document.getElementById("lms-name").value;
+          let baseURL = document.getElementById("lms-baseURL").value;
+          let authUsername = document.getElementById("lms-username").value;
+          let authPassword = document.getElementById("lms-password").value;
+          let statementsType = document.getElementById("XAPI").checked ? "XAPI" : "SCORM";
+
+          let obj = {
+            name: name,
+            baseURL: baseURL,
+            statementsType: statementsType
+          }
+
+          if(authUsername != "" && authPassword != ""){
+            obj.auth = {
+              username: authUsername,
+              password: authPassword
+            }
+          }
+
+
+          if(Cookies.get('role') == 'superadmin'){
+            let lmsAdmin = document.getElementById("lms-admin").value;
+            obj.idAdmin = lmsAdmin;
+          }
+
+          //la funzione addLms() chiama la route POST /admin/lms
+          const resp1 = fetch(bridgeURL + '/admin/'+idAdmin+'/lms', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': 'Bearer ' + Cookies.get('token')
+                        },
+                        body: JSON.stringify(obj)
+                      });
+
+          const data1 = await (await resp1).json();
+
+          console.log("POST", data1)
+
+          //la funzione addLms() chiama la funzione getLMS()
+          await getLMS(idAdmin);
+          //la funzione closeModalLMS() chiama la funzione getLMS()
+          //prima di chiudere il modal, pulisci i campi del form
+          document.getElementById("lms-name").value = "";
+          document.getElementById("lms-baseURL").value = "";
+          document.getElementById("lms-username").value = "";
+          document.getElementById("lms-password").value = "";
+          closeModalLMS();
+          //mostra una notifica che dice che l'utente è stato aggiunto e scompare dopo 3 secondi
+          //la notifica deve essere verde e in alto a destra con z-index 99
+          //se statusMsg == 'Utente già registrato' la notifica deve essere rossa
+
+          let alert = document.createElement("div");
+          alert.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show', 'position-absolute', 'mt-5', 'mr-5');
+          alert.style.zIndex = "99";
+          alert.style.top = "0";
+          alert.style.right = "0";
+          alert.role = "alert";
+          alert.innerHTML = data1.statusMsg;
+
+          if(data1 == undefined){
+            alert.classList.remove('alert-success');
+            alert.classList.add('alert-danger');
+          }
+
+          let button = document.createElement("button");
+          button.type = "button";
+          button.classList.add('close');
+          button.setAttribute("data-dismiss", "alert");
+          button.setAttribute("aria-label", "Close");
+          button.innerHTML = '<span aria-hidden="true">&times;</span>';
+          alert.appendChild(button);
+          document.getElementById("content-body").appendChild(alert);
+          setTimeout(function(){ alert.remove(); }, 3000);
+
+
+        }
+
+        //crea funzione showModalAddLMS()
+        function showModalAddLMS(){
+          //se il ruolo dell'utente è superadmin aggiungi al modal un campo di input per  l'admin al quale aggiungere un lms
+          console.log(Cookies.get('role'));
+          if(Cookies.get('role') == 'superadmin'){
+            let lmsInput = document.getElementById('lms-admin');
+            lmsInput.classList.remove('vis');
+          }
+
+          //fai visualizare il modal
+          $('#lms-modal').modal('show');
+          document.getElementById("lmsAdd-btn").onclick = function() {addLms(Cookies.get('idAdmin'))};
+        }
+
+        function closeModalLMS(){
+          //fai scomparire il modal
+          $('#lms-modal').modal('hide');
+        }
+
+        function closeModal(){
+          //la funzione closeModal() chiama la funzione showUsers(idLMS)
+          $('#modal').modal('hide');
+        }
+
+        async function deleteLMS(idAdmin, idLms){
+          //la funzione deleteLMS(idLms) chiama la route DELETE /admin/lms/:idLMS
+          //la funzione deleteLMS(idLms) chiama la funzione getLMS()
+          //la funzione addLms() chiama la route POST /admin/lms
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
+
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
+
+          //la funzione addLms() chiama la route POST /admin/lms
+          const resp1 = fetch(bridgeURL + '/admin/'+idAdmin+'/lms/'+idLms, {
+                        method: 'DELETE',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': 'Bearer ' + Cookies.get('token')
+                        }
+                      });
+
+          const data1 = await (await resp1).json();
+
+          console.log("POST", data1)
+          //fai apparire una notifica che dice che l'LMS è stato eliminato e scompare dopo 3 secondi
+          //la notifica deve essere verde e in alto a destra con z-index 99
+
+          let alert = document.createElement("div");
+          alert.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show', 'position-absolute', 'mt-5', 'mr-5');
+          alert.style.zIndex = "99";
+          alert.style.top = "0";
+          alert.style.right = "0";
+          alert.role = "alert";
+          alert.innerHTML = data1.statusMsg;
+
+          let button = document.createElement("button");
+          button.type = "button";
+          button.classList.add('close');
+          button.setAttribute("data-dismiss", "alert");
+          button.setAttribute("aria-label", "Close");
+          button.innerHTML = '<span aria-hidden="true">&times;</span>';
+          alert.appendChild(button);
+          document.getElementById("content-body").appendChild(alert);
+          setTimeout(function(){ alert.remove(); }, 3000);
+
+          await getLMS(idAdmin);
+        }
+
+        //richiama la show lms quando la pagina è pronta
+        $(document).ready(async function() {
+          document.getElementById("side-getLMS").onclick = async function() {getLMS(Cookies.get('idAdmin'))};
+          document.getElementById("side-tracking").onclick = showTracking;
+          localStorage.setItem("tracking", JSON.stringify([]));
+           await getLMS(Cookies.get('idAdmin'));
+        });
+
+        async function showTracking(){
+          //genera un iframe con src = bridgeURL + '/playerTrack.html'
+          //l'iframe deve essere in una card
+          //la card deve essere nel content-body
+          //la card deve avere un bottone per tornare indietro
+          //il bottone chiama la funzione getLMS()
+          let contentBody = document.getElementById("content-body");
+          let maincard = document.getElementById("main-card");
+          let contentHeader = document.getElementById("content-header");
+          contentHeader.innerHTML = "";
+          contentBody.innerHTML = "";
+          contentBody.style.height = '100%';
+          contentBody.style.width = '100%';
+          maincard.style.height = '100%';
+          maincard.style.width = '100%';
+          //aggiungi una card per aggiungere un lms
+          let iframe = document.createElement("iframe");
+
+          iframe.src = bridgeURL + '/playerTrack.html';
+          iframe.style.width = '100%';
+          iframe.style.height = '100%';
+          iframe.style.border = 'none';
+          iframe.style.margin = '2px';
+          iframe.style.padding = '2px';
+
+          contentBody.appendChild(iframe);
+
+          //aggiungi un bottone per tornare indietro
+          let backButton = document.createElement("button");
+          backButton.classList.add('btn', 'btn-secondary', 'ml-5', 'mt-2', 'button');
+          backButton.innerHTML = 'Torna indietro';
+          backButton.onclick = function() {
+            maincard.style.height = 'auto';
+            maincard.style.width = 'auto';
+            contentBody.style.height = 'auto';
+            contentBody.style.width = 'auto';
+            getLMS(Cookies.get('idAdmin'));
+          };
+          document.getElementById("content-header").appendChild(backButton);
+        }
+
+    </script>
+</body>
+</html>
