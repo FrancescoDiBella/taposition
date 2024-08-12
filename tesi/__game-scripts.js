@@ -278,7 +278,7 @@ BridgeController.prototype.initialize = function() {
             timestamp: formattedDate
         }
         ]
- 
+        
         var bridgeUrl = "http://127.0.0.1:9190/logs";
         //var bridgeUrl = "https://minervabridge.sferainnovazione.com";
         /*
@@ -306,7 +306,8 @@ BridgeController.prototype.initialize = function() {
                 //console.log(JSON.stringify(playerStatement));                  
             }
         );
-        console.log(prev_pos.x * (-3), prev_pos.z *3 ,pos.x * (-3), pos.z * 3)
+        console.log("pos",prev_pos.x * (-1), prev_pos.z  ,pos.x * (-1), pos.z )
+        console.log("prevPos",prev_pos.x * (-3), prev_pos.z *3 ,pos.x * (-3), pos.z * 3)
         prev_pos = { ...pos };
         /*
         let green = entities.filter((e)=>e.name=="SferaVerde");
