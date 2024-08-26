@@ -1,0 +1,23 @@
+#requirements for a python app that reads from kafka and writes to a websocket
+
+kafka-python==2.0.2
+websockets==10.0
+flask
+flask-socketio
+flask-cors
+
+    '''
+     websocket-broker:
+        build: 
+            context: ./websocket-broker  # Adjust the path to where your Dockerfile is located
+        image: websocket-broker:latest
+        container_name: websocket-broker
+        depends_on:
+            - kafkaServer
+        restart: on-failure
+        networks: 
+            tap:
+                ipv4_address: 10.0.100.27
+        ports:
+            - "8590:8590"
+    '''

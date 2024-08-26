@@ -7,7 +7,10 @@ RUN pip install --upgrade pip && \
     pip install pyspark && \
     pip install numpy && \
     pip install elasticsearch && \
-    pip install requests
+    pip install requests && \
+    pip install flask && \
+    pip install flask-socketio && \
+    pip install flask-cors
 # Copy dataset to /tmp directory
 COPY ./dataset/data.csv /tmp
 #set the working directory

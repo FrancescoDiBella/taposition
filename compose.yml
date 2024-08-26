@@ -36,7 +36,7 @@ services:
         image: apache/kafka:latest    
         command: > 
                bash -c "
-               /opt/kafka/bin/kafka-topics.sh --create --topic positions --bootstrap-server kafkaServer:9092"
+               /opt/kafka/bin/kafka-topics.sh --create --topic predictions --bootstrap-server kafkaServer:9092"
         depends_on:
             - kafkaServer
         networks: 
@@ -62,6 +62,11 @@ services:
         build:  
             context: ./spark
             dockerfile: dockerfile
+        deploy:
+            resources:
+                limits:
+                    cpus: "2.0"
+                    memory: "3G"
         image: spark:latest
         hostname: spark
         container_name: spark
@@ -72,7 +77,9 @@ services:
              /opt/spark/bin/spark-submit --conf spark.driver.extraJavaOptions="-Divy.cache.dir=/tmp -Divy.home=/tmp" --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.2,org.elasticsearch:elasticsearch-spark-30_2.12:7.15.2 /opt/tap/positionsApp.py
         depends_on:
             kafka-topics:
-                condition: service_completed_successfully   
+                condition: service_completed_successfully
+        ports:
+            - 8590:8590   
         networks: 
             tap:
                 ipv4_address: 10.0.100.20 

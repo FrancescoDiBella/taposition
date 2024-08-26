@@ -132,6 +132,27 @@ var BridgeController = pc.createScript('bridgeController');
 
 // initialize code called once per entity
 BridgeController.prototype.initialize = function() {
+    this.socket = io.connect('http://localhost:8590');
+    this.socket.emit ('initialize');
+    var socket = this.socket;
+
+    socket.on ('obstacles', function (data) {
+        console.log("obstacle", data.lon / (-3), 0, data.lat / 3 )
+        //make appear an obstacle at the defined x and y coordinates and make it disappear after 2 seconds
+        var obstacle = new pc.Entity();
+        obstacle.addComponent('model', {
+            type: 'box'
+        });
+        obstacle.setLocalPosition(data.lon / (-3), 0, data.lat / 3);
+        self.app.root.addChild(obstacle);
+        setTimeout(() => {
+            obstacle.destroy();
+        }, 2000);
+    });
+
+    socket.on ('good', function (data) {
+        console.log("good")
+    });
     // Imposta l'intervallo per registrare la posizione ogni 5 secondi
     var self = this;
     var idApp3D= "ABCD";
@@ -337,7 +358,7 @@ BridgeController.prototype.initialize = function() {
         );
         */
         cycles++;
-    }, 350); // 1000 millisecondi = 1 secondo
+    }, 850); // 1000 millisecondi = 1 secondo
 
     //inviare aggiornamenti di tutti gli elementi dynamic (esistono static e dynamic);
     //esempio: Le sfere si possono muovere, la capsula gialla no; è dunque utile inviare le posizioni delle sfere

@@ -7,7 +7,7 @@ from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.streaming import StreamingContext
 from pyspark.sql.dataframe import DataFrame
-from pyspark.sql.functions import *
+from pyspark.sql.functions import col, expr, from_json, abs as spark_abs
 from pyspark.sql.types import StructType, TimestampType, StructField, DoubleType, StringType
 
 from pyspark.ml.regression import LinearRegression
@@ -17,6 +17,39 @@ from pyspark.ml.pipeline import PipelineModel
 
 from pyspark.conf import SparkConf
 import requests
+
+from flask import Flask
+from flask_socketio import SocketIO, emit
+from flask_cors import CORS
+from threading import Thread
+
+# Flask and SocketIO setup
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})  # Configure CORS
+socketio = SocketIO(app, cors_allowed_origins="*")  # Allow all origins
+
+# Start Flask-SocketIO server in a separate thread
+from threading import Thread
+
+def run_flask_socketio():
+    socketio.run(app, host='0.0.0.0', port=8590, allow_unsafe_werkzeug=True)
+
+flask_thread = Thread(target=run_flask_socketio)
+flask_thread.start()
+
+# Function to emit WebSocket events if out of bounds
+def emit_event_if_out_of_bounds(df):
+    # Filter out-of-bounds locations
+    out_of_bounds_df = df.filter((spark_abs(col("predicted_location.lat")) > 20) | (spark_abs(col("predicted_location.lon")) > 20))
+    
+    # Collect rows to process them in local context
+    rows = out_of_bounds_df.collect()
+    for row in rows:
+        predicted_location = row['predicted_location']
+        lon = predicted_location['lon']
+        lat = predicted_location['lat']
+        print(f"Predicted location out of bounds: {predicted_location}")
+        socketio.emit('obstacles', {'lon': lon, 'lat': lat})
 
 def create_index_if_not_exists(index_name, mapping_file):
     url = f'http://elasticsearch:9200/{index_name}'
@@ -43,15 +76,16 @@ elasticIndex = "logs_position"
 mappingFile = "/opt/tap/mapping.json"
 
 create_index_if_not_exists(elasticIndex, mappingFile)
+
+# Configuration for Spark
 sparkConf = SparkConf().set("es.nodes", "elasticsearch").set("es.port", "9200")
 
 # Initialize Spark session
-spark = SparkSession.builder.appName("TapPosition").config(conf=sparkConf).getOrCreate()
+spark = SparkSession.builder.appName("TapPosition").config(conf=sparkConf).config("spark.executor.cores", "2").config("spark.streaming.kafka.maxRatePerPartition", "15").config("spark.streaming.receiver.maxRate", "0").config("spark.streaming.backpressure.enabled", "true").getOrCreate()
 spark.sparkContext.setLogLevel("ERROR")
 
 kafkaServer = "kafkaServer:9092"
 topic = "positions"
-# Path to the trained models
 modelPath = "/tmp/tapPositions/model"
 
 # Read data from Kafka
@@ -85,15 +119,10 @@ schema = StructType([
 # Deserialize the JSON data and apply the schema
 parseDf = df.selectExpr("CAST(value AS STRING) as json").select(from_json(col("json"), schema).alias("data")).select("data.*")
 
-# Print the received data to the console
-query = parseDf.writeStream \
-    .outputMode("append") \
-    .format("console") \
-    .start()
-
 # Select the relevant columns 
 positionsDf = parseDf.selectExpr("location.lat AS next_lat", "location.lon AS next_lon",
                                  "source.lat AS lat", "source.lon AS lon", "`@timestamp` AS timestamp", "identifier AS identifier", "destination.lat AS destination_lat", "destination.lon AS destination_lon")
+
 # Load the trained models
 model_lat = PipelineModel.load(modelPath + "_lat")
 model_lon = PipelineModel.load(modelPath + "_lon")
@@ -125,16 +154,30 @@ predictions = predictions.withColumn("source", expr("struct(lat, lon)")).drop("l
 predictions = predictions.withColumn("location", expr("struct(next_lat as lat, next_lon as lon)")).drop("next_lat").drop("next_lon")
 predictions = predictions.withColumn("destination", expr("struct(destination_lat as lat, destination_lon as lon)")).drop("destination_lat").drop("destination_lon")
 
-predictions.writeStream \
-    .outputMode("append") \
-    .format("console") \
-    .start()
+# Write to Elasticsearch and emit WebSocket events
+def process_streaming_data():
+    # Use foreachBatch to process each micro-batch
+    def foreach_batch(batch_df, batch_id):
+        # Write to Elasticsearch
+        
+        
+        # Emit WebSocket events for out-of-bounds predictions
+        emit_event_if_out_of_bounds(batch_df)
+    elastic_query = predictions.writeStream \
+        .option("checkpointLocation", "/tmp/positions") \
+        .format("es") \
+        .start(elasticIndex)
+    
+    query = predictions.writeStream \
+        .foreachBatch(foreach_batch) \
+        .outputMode("append") \
+        .start()
+    
+    elastic_query.awaitTermination()
+    query.awaitTermination()
 
-# Write the predictions to Elasticsearch
-predictions.writeStream \
-    .option("checkpointLocation", "/tmp/") \
-    .format("es") \
-    .start(elasticIndex) \
-    .awaitTermination()
+# Process streaming data
+process_streaming_data()
 
-spark.stop()
+# Start Flask-SocketIO server
+flask_thread.join()

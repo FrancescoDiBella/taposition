@@ -1,0 +1,8 @@
+#make a dockerfile for a python app that reads from kafka and writes to a websocket
+FROM python:3.7-slim
+WORKDIR /app
+COPY requirements.txt /app
+RUN pip install -r requirements.txt
+COPY . /app
+CMD ["python", "-u", "app.py"]
+
