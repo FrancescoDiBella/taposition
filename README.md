@@ -25,12 +25,12 @@ Technologies used:
     ```
     cd ./path/to/taposition
     ```
-3.1 Modify the line 72 of  `compose.yml` to execute the positionsTrainer.py script to train the models
-3.2 Start the docker containers:
+3. Modify the line 72 of  `compose.yml` to execute the positionsTrainer.py script to train the models
+4. Start the docker containers:
     ```
     docker-compose up
     ```
-3.3 Modify the line 72 of  `compose.yml` to execute the positionsApp.py script to train the models
-3.4 Rerun the compose
+5. Modify the line 72 of  `compose.yml` to execute the positionsApp.py script to train the models
+6. Rerun the compose
 
-4. Import the kibana dashboard
+7. Import the kibana dashboard
