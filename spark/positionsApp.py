@@ -132,7 +132,7 @@ predictions.writeStream \
 
 # Write the predictions to Elasticsearch
 predictions.writeStream \
-    .option("checkpointLocation", "/tmp/") \
+    .option("checkpointLocation", "/tmp/positions") \
     .format("es") \
     .start(elasticIndex) \
     .awaitTermination()
